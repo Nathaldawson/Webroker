@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A platform to list and find properties for free. No brokers involved.">
+    <title>Webroker</title>
+    <style>
+        /* Basic Styles */
+        body, h1, h2, h3, p, ul, li, form, input, textarea, select, button {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body {
+            background-color: #f9f9f9;
+            color: #333;
+            padding-top: 60px;
+            font-size: 1rem;
+        }
+
+        .container {
+            width: 85%;
+            margin: 0 auto;
+            max-width: 1200px;
+        }
+
+        header {
+            background-color: #222;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 2.8rem;
+        }
+
+        nav ul {
+            list-style-type: none;
+            margin-top: 10px;
+        }
+
+        nav ul li {
+            display: inline-block;
+            margin-right: 25px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        nav ul li a:hover {
+            color: #ff7f50;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            overflow: auto;
+            padding-top: 60px;
+            transition: all 0.3s ease;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 5% auto;
+            padding: 30px;
+            border: 1px solid #888;
+            width: 40%;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .modal-content h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .modal-content p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        .modal-content a {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 1.2rem;
+        }
+
+        .modal-content a:hover {
+            text-decoration: underline;
+        }
+
+        .close-btn {
+            color: #aaa;
+            font-size: 2rem;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            color: #000;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin: 40px 0;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .tabs button {
+            padding: 12px 30px;
+            background-color: #f1f1f1;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .tabs button:hover {
+            background-color: #ff7f50;
+            color: white;
+        }
+
+        .tabs button.active {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Property Listings */
+        .property-list {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .property {
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #ddd;
+            width: calc(25% - 20px);
+            box-sizing: border-box;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .property:hover {
+            transform: translateY(-5px);
+        }
+
+        .property img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .property h3 {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .property p {
+            font-size: 1.1rem;
+            color: #777;
+            margin-bottom: 12px;
+        }
+
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .city-selector {
+            font-size: 1rem;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            margin-left: 10px;
+        }
+
+        .browse-section {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .browse-section h2 {
+            font-size: 2rem;
+            margin-right: 20px;
+        }
+
+        .contact-info {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .contact-info input {
+            width: 48%;
+        }
+
+        .form-section {
+            margin-top: 20px;
+        }
+
+        .form-section ul {
+            list-style-type: none;
+        }
+
+        .form-section li {
+            margin-bottom: 15px;
+        }
+
+        .form-section label {
+            display: block;
+            font-weight: 600;
+        }
+
+        .form-section input, .form-section select, .form-section textarea {
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            width: 100%;
+        }
+
+        .form-section button {
+            padding: 12px;
+            background-color: #28a745;
+            color: white;
+            font-size: 1.2rem;
+            border: none;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .form-section button:hover {
+            background-color: #218838;
+        }
+
+        footer {
+            background-color: #222;
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        footer h2 {
+            font-size: 1.6rem;
+            margin-bottom: 20px;
+        }
+
+        footer p {
+            font-size: 1.1rem;
+            color: #bbb;
+            line-height: 1.6;
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Webroker</h1>
+            <nav>
+                <ul>
+                    <li><a href="#" onclick="openContactModal()">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="tabs">
+                <button id="rent-tab" class="active" onclick="openTab('rent')">Rent</button>
+                <button id="buy-tab" onclick="openTab('buy')">Buy</button>
+                <button id="list-tab" onclick="openTab('list')">List Property</button>
+            </div>
+
+            <div id="rent-content" class="tab-content active">
+                <h2>Browse Rental Properties In: 
+                    <select class="city-selector" id="city-selector" onchange="filterProperties('rent')">
+                        <option value="Bangalore">Bangalore</option>
+                        <option value="Mumbai">Mumbai</option>
+                        <option value="Delhi">Delhi</option>
+                    </select>
+                </h2>
+                <p>Explore rental properties directly from verified owners for free!</p>
+
+                <div class="property-list" id="rent-properties">
+                    <!-- Properties will be dynamically displayed here based on city selection -->
+                </div>
+            </div>
+
+            <div id="buy-content" class="tab-content">
+                <h2>Browse Properties to Buy In: 
+                    <select class="city-selector" id="buy-city-selector" onchange="filterProperties('buy')">
+                        <option value="Bangalore">Bangalore</option>
+                        <option value="Mumbai">Mumbai</option>
+                        <option value="Delhi">Delhi</option>
+                    </select>
+                </h2>
+                <p>Explore properties directly from verified sellers!</p>
+
+                <div class="property-list" id="buy-properties">
+                    <!-- Properties will be dynamically displayed here based on city selection -->
+                </div>
+            </div>
+
+            <div id="list-content" class="tab-content">
+                <h2>List Your Property</h2>
+                <p>List your property for free and connect directly with tenants or buyers.</p>
+
+                <form class="form-section">
+                    <ul>
+                        <li>
+                            <label for="property-name">Property Name:</label>
+                            <input type="text" id="property-name" name="property-name" required>
+                        </li>
+                        <li>
+                            <label for="property-type">Property Type:</label>
+                            <select id="property-type" name="property-type" required>
+                                <option value="apartment">Apartment</option>
+                                <option value="house">House</option>
+                                <option value="villa">Villa</option>
+                                <option value="office">Office</option>
+                                <option value="land">Land</option>
+                            </select>
+                        </li>
+                        <li>
+                            <label for="location">Location:</label>
+                            <input type="text" id="location" name="location" required>
+                        </li>
+                        <li>
+                            <label for="price">Price:</label>
+                            <input type="number" id="price" name="price" required>
+                        </li>
+                        <li>
+                            <label for="upload-images">Upload Images/Videos:</label>
+                            <input type="file" id="upload-images" name="upload-images" multiple>
+                        </li>
+                        <li class="contact-info">
+                            <div>
+                                <label for="contact-phone">Phone:</label>
+                                <input type="text" id="contact-phone" name="contact-phone" placeholder="+91 8884200999">
+                            </div>
+                            <div>
+                                <label for="contact-email">Email:</label>
+                                <input type="email" id="contact-email" name="contact-email" placeholder="nathaldawson33@gmail.com">
+                            </div>
+                        </li>
+                        <li>
+                            <button type="submit">Submit Listing</button>
+                        </li>
+                    </ul>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Contact Modal -->
+    <div id="contactModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeContactModal()">&times;</span>
+            <h2>Contact Information</h2>
+            <p><strong>Phone:</strong> +91 8884200999</p>
+            <p><strong>Email:</strong> <a href="mailto:nathaldawson33@gmail.com">nathaldawson33@gmail.com</a></p>
+            <p><strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/nathal-dawson-com/" target="_blank">Visit LinkedIn Profile</a></p>
+        </div>
+    </div>
+
+    <footer>
+        <p>At Webroker, we're on a mission to disrupt the traditional real estate industry by providing a platform that allows individuals to connect directly with buyers, sellers, and renters. Our freemium model ensures that people have access to free and easy property listing while empowering businesses to scale at affordable rates. We want to create transparency and fairness in real estate transactions, eliminating brokers and unnecessary fees.</p>
+        <p>If you believe in our mission and would like to help fuel our vision, we are open to discussions on funding and partnerships.</p>
+    </footer>
+
+    <script>
+        // Functions for handling modal and tab switching
+        function openContactModal() {
+            document.getElementById('contactModal').style.display = 'block';
+        }
+
+        function closeContactModal() {
+            document.getElementById('contactModal').style.display = 'none';
+        }
+
+        function openTab(tabName) {
+            var tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(function(tab) {
+                tab.classList.remove('active');
+            });
+            document.getElementById(tabName + '-content').classList.add('active');
+
+            var buttons = document.querySelectorAll('.tabs button');
+            buttons.forEach(function(button) {
+                button.classList.remove('active');
+            });
+            document.getElementById(tabName + '-tab').classList.add('active');
+        }
+
+        // Properties Data (Rent, Buy)
+        const properties = {
+            rent: [
+                { name: "2 BHK Apartment in Bangalore", type: "Apartment", city: "Bangalore", price: "₹25,000", image: "apartment.jpg" },
+                { name: "3 BHK House in Bangalore", type: "House", city: "Bangalore", price: "₹40,000", image: "house.jpg" },
+                { name: "1 BHK Apartment in Mumbai", type: "Apartment", city: "Mumbai", price: "₹15,000", image: "apartment2.jpg" },
+                { name: "2 BHK Villa in Delhi", type: "Villa", city: "Delhi", price: "₹30,000", image: "villa.jpg" }
+            ],
+            buy: [
+                { name: "3 BHK House in Bangalore", type: "House", city: "Bangalore", price: "₹1.2 Cr", image: "house3.jpg" },
+                { name: "Land in Delhi", type: "Land", city: "Delhi", price: "₹50 Lakhs", image: "land.jpg" },
+                { name: "Office Space in Mumbai", type: "Office", city: "Mumbai", price: "₹1.5 Cr", image: "office.jpg" },
+                { name: "Villa in Bangalore", type: "Villa", city: "Bangalore", price: "₹3.5 Cr", image: "villa2.jpg" }
+            ]
+        };
+
+        function filterProperties(tab) {
+            const city = document.getElementById(tab === 'rent' ? 'city-selector' : 'buy-city-selector').value;
+            const filteredProperties = properties[tab].filter(function(property) {
+                return property.city === city;
+            });
+            displayProperties(tab, filteredProperties);
+        }
+
+        function displayProperties(tab, filteredProperties) {
+            const container = document.getElementById(tab === 'rent' ? 'rent-properties' : 'buy-properties');
+            container.innerHTML = ''; // Clear the current properties
+            filteredProperties.forEach(function(property) {
+                const propertyElement = `
+                    <div class="property">
+                        <img src="${property.image}" alt="${property.name}">
+                        <h3>${property.name}</h3>
+                        <p>${property.type} - ${property.city}</p>
+                        <p>${property.price}</p>
+                        <button class="btn">View Details</button>
+                    </div>
+                `;
+                container.innerHTML += propertyElement;
+            });
+        }
+
+        // Initialize Property Display
+        displayProperties('rent', properties.rent);
+        displayProperties('buy', properties.buy);
+
+    </script>
+</body>
+</html>
